@@ -4,16 +4,9 @@ const PendingData = require('../models/PendingData');
 // Obtener todas las tareas
 const getAllTasks = async (req, res) => {
   try {
-<<<<<<< HEAD
     const { userId = 1, completed, limit = 50, offset = 0 } = req.query;
     
     let query = { userId: parseInt(userId) };
-=======
-    const { completed, limit = 50, offset = 0 } = req.query;
-    const userId = req.userId; // Obtener del token de autenticación
-    
-    let query = { userId: userId.toString() };
->>>>>>> 0ea7a8e (notificaciones)
     if (completed !== undefined) {
       query.completed = completed === 'true';
     }
@@ -48,10 +41,6 @@ const getAllTasks = async (req, res) => {
 const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
-<<<<<<< HEAD
-=======
-    const userId = req.userId.toString();
->>>>>>> 0ea7a8e (notificaciones)
     const task = await Task.findById(id);
     
     if (!task) {
@@ -61,17 +50,6 @@ const getTaskById = async (req, res) => {
       });
     }
     
-<<<<<<< HEAD
-=======
-    // Verificar que la tarea pertenezca al usuario
-    if (task.userId !== userId) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permiso para acceder a esta tarea'
-      });
-    }
-    
->>>>>>> 0ea7a8e (notificaciones)
     res.json({
       success: true,
       data: task
@@ -88,20 +66,7 @@ const getTaskById = async (req, res) => {
 // Crear nueva tarea
 const createTask = async (req, res) => {
   try {
-<<<<<<< HEAD
     const { title, body, userId = 1, originalId } = req.body;
-=======
-    const { title, body, originalId, userId: bodyUserId } = req.body;
-    const userId = req.userId; // Obtener del token de autenticación
-    
-    // Validar que no se envíe userId == 1 en el body
-    if (bodyUserId === 1 || bodyUserId === "1") {
-      return res.status(400).json({
-        success: false,
-        message: 'No se permite userId igual a 1. El userId se obtiene del token de autenticación.'
-      });
-    }
->>>>>>> 0ea7a8e (notificaciones)
     
     if (!title || !body) {
       return res.status(400).json({
@@ -113,11 +78,7 @@ const createTask = async (req, res) => {
     const task = new Task({
       title,
       body,
-<<<<<<< HEAD
       userId: parseInt(userId),
-=======
-      userId: userId.toString(),
->>>>>>> 0ea7a8e (notificaciones)
       originalId,
       syncStatus: 'synced'
     });
@@ -142,7 +103,6 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-<<<<<<< HEAD
     const updates = req.body;
     
     const task = await Task.findByIdAndUpdate(
@@ -150,12 +110,6 @@ const updateTask = async (req, res) => {
       { ...updates, syncStatus: 'synced' },
       { new: true, runValidators: true }
     );
-=======
-    const userId = req.userId.toString();
-    const updates = req.body;
-    
-    const task = await Task.findById(id);
->>>>>>> 0ea7a8e (notificaciones)
     
     if (!task) {
       return res.status(404).json({
@@ -164,20 +118,6 @@ const updateTask = async (req, res) => {
       });
     }
     
-<<<<<<< HEAD
-=======
-    // Verificar que la tarea pertenezca al usuario
-    if (task.userId !== userId) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permiso para actualizar esta tarea'
-      });
-    }
-    
-    Object.assign(task, updates, { syncStatus: 'synced' });
-    await task.save();
-    
->>>>>>> 0ea7a8e (notificaciones)
     res.json({
       success: true,
       message: 'Tarea actualizada exitosamente',
@@ -196,10 +136,6 @@ const updateTask = async (req, res) => {
 const toggleTask = async (req, res) => {
   try {
     const { id } = req.params;
-<<<<<<< HEAD
-=======
-    const userId = req.userId.toString();
->>>>>>> 0ea7a8e (notificaciones)
     const task = await Task.findById(id);
     
     if (!task) {
@@ -209,17 +145,6 @@ const toggleTask = async (req, res) => {
       });
     }
     
-<<<<<<< HEAD
-=======
-    // Verificar que la tarea pertenezca al usuario
-    if (task.userId !== userId) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permiso para modificar esta tarea'
-      });
-    }
-    
->>>>>>> 0ea7a8e (notificaciones)
     await task.toggleComplete();
     
     res.json({
@@ -240,12 +165,7 @@ const toggleTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
-<<<<<<< HEAD
     const task = await Task.findByIdAndDelete(id);
-=======
-    const userId = req.userId.toString();
-    const task = await Task.findById(id);
->>>>>>> 0ea7a8e (notificaciones)
     
     if (!task) {
       return res.status(404).json({
@@ -254,19 +174,6 @@ const deleteTask = async (req, res) => {
       });
     }
     
-<<<<<<< HEAD
-=======
-    // Verificar que la tarea pertenezca al usuario
-    if (task.userId !== userId) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permiso para eliminar esta tarea'
-      });
-    }
-    
-    await Task.findByIdAndDelete(id);
-    
->>>>>>> 0ea7a8e (notificaciones)
     res.json({
       success: true,
       message: 'Tarea eliminada exitosamente'
@@ -283,17 +190,10 @@ const deleteTask = async (req, res) => {
 // Obtener estadísticas de tareas
 const getTaskStats = async (req, res) => {
   try {
-<<<<<<< HEAD
     const { userId = 1 } = req.query;
     
     const stats = await Task.aggregate([
       { $match: { userId: parseInt(userId) } },
-=======
-    const userId = req.userId; // Obtener del token de autenticación
-    
-    const stats = await Task.aggregate([
-      { $match: { userId: userId.toString() } },
->>>>>>> 0ea7a8e (notificaciones)
       {
         $group: {
           _id: null,
@@ -342,26 +242,14 @@ const syncTasks = async (req, res) => {
     const results = [];
     const errors = [];
     
-<<<<<<< HEAD
     for (const taskData of tasks) {
       try {
         const { title, body, userId = 1, originalId, completed = false } = taskData;
-=======
-    const userId = req.userId; // Obtener del token de autenticación
-    
-    for (const taskData of tasks) {
-      try {
-        const { title, body, originalId, completed = false } = taskData;
->>>>>>> 0ea7a8e (notificaciones)
         
         const task = new Task({
           title,
           body,
-<<<<<<< HEAD
           userId: parseInt(userId),
-=======
-          userId: userId.toString(),
->>>>>>> 0ea7a8e (notificaciones)
           originalId,
           completed,
           syncStatus: 'synced'
